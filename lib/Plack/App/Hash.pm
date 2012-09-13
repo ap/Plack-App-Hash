@@ -41,6 +41,10 @@ sub call {
 			if not Plack::Util::header_exists $hdrs, 'Content-Type';
 	}
 
+	if ( not Plack::Util::header_exists $hdrs, 'Content-Length' ) {
+		Plack::Util::header_push $hdrs, 'Content-Length' => length $content->{ $path };
+	}
+
 	my $body = [];
 	Array::RefElem::av_push @$body, $content->{ $path };
 	return [ 200, $hdrs, $body ];
