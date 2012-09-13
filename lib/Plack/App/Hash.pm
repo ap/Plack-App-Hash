@@ -1,10 +1,50 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-no warnings qw( once qw );
+
+# ABSTRACT: Serve up the contents of a hash as a website
 
 package Plack::App::Hash;
-use Carp;
+use parent 'Plack::Component';
+
+use Plack::Util ();
+use Array::RefElem ();
+#use Digest::SHA;
+
+use Plack::Util::Accessor qw( content headers default_type );
+
+sub call {
+	my $self = shift;
+	my $env  = shift;
+
+	my $path = $env->{PATH_INFO} || '';
+	$path =~ s!\A/!!;
+
+	my $content = $self->content;
+	unless ( $content and exists $content->{ $path } ) {
+		my $body = [ $env->{'PATH_INFO'} . ' not found' ];
+		return [ 404, [
+			'Content-Type'   => 'text/plain',
+			'Content-Length' => length $body->[0],
+		], $body ];
+	}
+
+	my $headers = $self->headers;
+	my $hdrs = ( $headers and exists $headers->{ $path } ) ? $headers->{ $path } : [];
+	if ( not ref $hdrs ) {
+		require JSON::XS;
+		$hdrs = JSON::XS::decode_json $hdrs;
+	}
+
+	if ( my $default = $self->default_type ) {
+		Plack::Util::header_push $hdrs, 'Content-Type' => $default
+			if not Plack::Util::header_exists $hdrs, 'Content-Type';
+	}
+
+	my $body = [];
+	Array::RefElem::av_push @$body, $content->{ $path };
+	return [ 200, $hdrs, $body ];
+}
 
 1;
 
@@ -12,86 +52,30 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Plack::App::Hash;
-
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-
+ use Plack::App::Hash;
+ my $app = Plack::App::Hash->new(
+     content      => { '' => 'Hello World!' },
+     default_type => 'text/plain',
+ )->to_app;
 
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+XXX
 
+=head1 CONFIGURATION
 
-=head1 INTERFACE
+=over 4
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+=item C<content>
 
+XXX
 
-=head1 DIAGNOSTICS
+=item C<headers>
 
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+XXX JSON
 
-=over
+=item C<default_type>
 
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Description of error here]
-
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
+XXX
 
 =back
-
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-
-Plack::App::Hash requires no configuration files or environment variables.
-
-
-=head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
-
-
-=head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
-
-No bugs have been reported.
