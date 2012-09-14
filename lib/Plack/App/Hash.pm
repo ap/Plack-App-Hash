@@ -9,6 +9,7 @@ use parent 'Plack::Component';
 
 use Plack::Util ();
 use Array::RefElem ();
+use HTTP::Status ();
 #use Digest::SHA;
 
 use Plack::Util::Accessor qw( content headers default_type );
@@ -21,13 +22,7 @@ sub call {
 	$path =~ s!\A/!!;
 
 	my $content = $self->content;
-	unless ( $content and exists $content->{ $path } ) {
-		my $body = [ $env->{'PATH_INFO'} . ' not found' ];
-		return [ 404, [
-			'Content-Type'   => 'text/plain',
-			'Content-Length' => length $body->[0],
-		], $body ];
-	}
+	return $self->error( 404 ) unless $content and exists $content->{ $path };
 
 	my $headers = $self->headers;
 	my $hdrs = ( $headers and exists $headers->{ $path } ) ? $headers->{ $path } : [];
@@ -48,6 +43,15 @@ sub call {
 	my $body = [];
 	Array::RefElem::av_push @$body, $content->{ $path };
 	return [ 200, $hdrs, $body ];
+}
+
+sub error {
+	my $status = pop;
+	my $body = [ qq(<!doctype html>\n<title>$status</title><h1><font face=sans-serif>) . HTTP::Status::status_message $status ];
+	return [ $status, [
+		'Content-Type'   => 'text/html',
+		'Content-Length' => length $body->[0],
+	], $body ];
 }
 
 1;
