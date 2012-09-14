@@ -23,6 +23,7 @@ sub call {
 
 	my $content = $self->content;
 	return $self->error( 404 ) unless $content and exists $content->{ $path };
+	return $self->error( 500 ) if ref $content->{ $path };
 
 	my $headers = $self->headers;
 	my $hdrs = ( $headers and exists $headers->{ $path } ) ? $headers->{ $path } : [];
