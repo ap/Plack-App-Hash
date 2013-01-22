@@ -12,13 +12,13 @@ use Array::RefElem ();
 use HTTP::Status ();
 #use Digest::SHA;
 
-use Plack::Util::Accessor qw( content headers default_type );
+use Plack::Util::Accessor qw( content headers auto_type default_type );
 
 sub call {
 	my $self = shift;
 	my $env  = shift;
 
-	my $path = $env->{PATH_INFO} || '';
+	my $path = $env->{'PATH_INFO'} || '';
 	$path =~ s!\A/!!;
 
 	my $content = $self->content;
@@ -32,9 +32,14 @@ sub call {
 		$hdrs = JSON::XS::decode_json $hdrs;
 	}
 
-	if ( my $default = $self->default_type ) {
-		Plack::Util::header_push $hdrs, 'Content-Type' => $default
-			if not Plack::Util::header_exists $hdrs, 'Content-Type';
+	{
+		my $auto    = $self->auto_type;
+		my $default = $self->default_type;
+		last unless $auto or $default;
+		last if Plack::Util::header_exists $hdrs, 'Content-Type';
+		$auto &&= do { require Plack::MIME; Plack::MIME->mime_type( $path ) };
+		my $type = $auto || $default;
+		Plack::Util::header_push $hdrs, 'Content-Type' => $type if $type;
 	}
 
 	if ( not Plack::Util::header_exists $hdrs, 'Content-Length' ) {
@@ -83,6 +88,10 @@ XXX
 =item C<headers>
 
 XXX JSON
+
+=item C<auto_type>
+
+XXX
 
 =item C<default_type>
 
