@@ -48,7 +48,8 @@ sub call {
 
 sub error {
 	my $status = pop;
-	my $body = [ qq(<!doctype html>\n<title>$status</title><h1><font face=sans-serif>) . HTTP::Status::status_message $status ];
+	my $pkg = __PACKAGE__;
+	my $body = [ qq(<!doctype html>\n<title>$pkg $status</title><h1><font face=sans-serif>) . HTTP::Status::status_message $status ];
 	return [ $status, [
 		'Content-Type'   => 'text/html',
 		'Content-Length' => length $body->[0],
