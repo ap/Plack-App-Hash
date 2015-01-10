@@ -32,8 +32,8 @@ sub call {
 		$headers = [];
 	}
 	elsif ( not ref $headers ) {
-		require JSON::XS;
-		$headers = JSON::XS::decode_json $headers;
+		require JSON::MaybeXS;
+		$headers = JSON::MaybeXS::decode_json $headers;
 	}
 
 	return $self->error( 500 ) if 'ARRAY' ne ref $headers;
