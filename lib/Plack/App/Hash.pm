@@ -3,9 +3,10 @@ use 5.006;
 use strict;
 use warnings;
 
+package Plack::App::Hash;
+
 # ABSTRACT: Serve up the contents of a hash as a website
 
-package Plack::App::Hash;
 use parent 'Plack::Component';
 
 use Plack::Util ();
