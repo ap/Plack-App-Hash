@@ -80,7 +80,13 @@ __END__
 
 =head1 DESCRIPTION
 
-XXX
+This PSGI application responds to HTTP requests by looking up the request path
+in a hash and returning the value of that key (if found) as the response body.
+
+This is useful for cases like inlining the content of a boilerplate static site
+into a single-page-application-in-a-module, or serving up a tied DBM hash that
+other programs can update while the web app itself contains very little logic
+E<ndash> in short, for one-off hacks and scaling down.
 
 =head1 CONFIGURATION
 
@@ -88,18 +94,25 @@ XXX
 
 =item C<content>
 
-XXX
+The content of your site. Each key-value pair will be one resource in your URI
+space. The key is its URI path without leading slash, and the is the content of
+the resource. Values must not be references.
 
-=item C<headers>
+=item C<headers> (optional)
 
-XXX JSON
+The headers of your resources. As in C<content>, each key is a URI path without
+leading slash. The value of a key may be either an array reference or a string
+containing a JSON encoding of an array. In either case it is taken to mean the
+L<PSGI> header array for the resource.
 
-=item C<auto_type>
+=item C<auto_type> (optional)
 
-XXX
+If true, a C<Content-Type> header value will be computed automatically for any
+responses which do not already have one by way of the C<headers> hash.
 
-=item C<default_type>
+=item C<default_type> (optional)
 
-XXX
+The C<Content-Type> value to use for any responses which would not otherwise
+have one, whether by matching C<headers> or by C<auto_type> fallback.
 
 =back
