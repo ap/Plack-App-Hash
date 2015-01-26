@@ -96,8 +96,8 @@ E<ndash> in short, for one-off hacks and scaling down.
 =item C<content>
 
 The content of your site. Each key-value pair will be one resource in your URI
-space. The key is its URI path without leading slash, and the is the content of
-the resource. Values must not be references.
+space. The key is its URI path without leading slash, the value is the content
+of the resource. Values must not be references.
 
 =item C<headers> (optional)
 
