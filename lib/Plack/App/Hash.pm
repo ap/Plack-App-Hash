@@ -45,11 +45,11 @@ sub call {
 		last unless $auto or $default;
 		last if Plack::Util::header_exists $headers, 'Content-Type';
 		$auto &&= do { require Plack::MIME; Plack::MIME->mime_type( $path ) };
-		Plack::Util::header_push $headers, 'Content-Type' => $_ for $auto || $default || ();
+		push @$headers, 'Content-Type' => $_ for $auto || $default || ();
 	}
 
 	if ( not Plack::Util::header_exists $headers, 'Content-Length' ) {
-		Plack::Util::header_push $headers, 'Content-Length' => length $content->{ $path };
+		push @$headers, 'Content-Length' => length $content;
 	}
 
 	my @body;
