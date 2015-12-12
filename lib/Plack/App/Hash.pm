@@ -20,7 +20,7 @@ sub call {
 	my $self = shift;
 	my $env  = shift;
 
-	my $path = $env->{'PATH_INFO'} || '';
+	my $path = $env->{'PATH_INFO'};
 	$path =~ s!\A/!!;
 
 	my $content = $self->content;
