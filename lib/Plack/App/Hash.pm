@@ -16,6 +16,11 @@ use HTTP::Status ();
 
 use Plack::Util::Accessor qw( content headers auto_type default_type );
 
+sub prepare_app {
+	my $self = shift;
+	require Plack::MIME if $self->auto_type;
+}
+
 sub call {
 	my $self = shift;
 	my $env  = shift;
@@ -44,7 +49,7 @@ sub call {
 		my $default = $self->default_type;
 		last unless $auto or $default;
 		last if Plack::Util::header_exists $headers, 'Content-Type';
-		$auto &&= do { require Plack::MIME; Plack::MIME->mime_type( $path ) };
+		$auto &&= Plack::MIME->mime_type( $path );
 		push @$headers, 'Content-Type' => $_ for $auto || $default || ();
 	}
 
