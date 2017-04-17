@@ -71,6 +71,8 @@ sub error {
 
 __END__
 
+=pod
+
 =head1 SYNOPSIS
 
  use Plack::App::Hash;
