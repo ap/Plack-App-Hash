@@ -2,7 +2,7 @@ use 5.006; use strict; use warnings;
 
 package Plack::App::Hash;
 
-our $VERSION = '1.000';
+our $VERSION = '1.001';
 
 BEGIN { require Plack::Component; our @ISA = 'Plack::Component' }
 
