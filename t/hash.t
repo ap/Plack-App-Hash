@@ -1,5 +1,4 @@
-use strict;
-use warnings;
+use strict; use warnings;
 
 use Test::More tests => 18;
 use Plack::App::Hash;

@@ -1,7 +1,4 @@
-#!/usr/bin/perl
-use 5.006;
-use strict;
-use warnings;
+use 5.006; use strict; use warnings;
 
 package Plack::App::Hash;
 
