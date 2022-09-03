@@ -2,7 +2,7 @@ use 5.006; use strict; use warnings;
 
 package Plack::App::Hash;
 
-# ABSTRACT: Serve up the contents of a hash as a website
+our $VERSION = '1.000';
 
 BEGIN { require Plack::Component; our @ISA = 'Plack::Component' }
 
@@ -73,6 +73,14 @@ sub error {
 
 __END__
 
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Plack::App::Hash - Serve up the contents of a hash as a website
+
 =head1 SYNOPSIS
 
  use Plack::App::Hash;
@@ -119,3 +127,5 @@ The C<Content-Type> value to use for any responses which would not otherwise
 have one, whether by matching C<headers> or by C<auto_type> fallback.
 
 =back
+
+=cut
