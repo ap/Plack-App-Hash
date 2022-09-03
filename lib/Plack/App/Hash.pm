@@ -7,7 +7,7 @@ package Plack::App::Hash;
 
 # ABSTRACT: Serve up the contents of a hash as a website
 
-use parent 'Plack::Component';
+BEGIN { require Plack::Component; our @ISA = 'Plack::Component' }
 
 use Plack::Util ();
 use Array::RefElem ();
